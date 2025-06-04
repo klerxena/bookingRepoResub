@@ -1,4 +1,5 @@
 ﻿using BookingCommon;
+using BookingServices;
 using System;
 using System.Collections.Generic;
 
@@ -6,7 +7,8 @@ public class BookingProcess
 {
     //private static IAppointmentRepository repository = new InMemoryAppointmentRepository();
     //private static IAppointmentRepository repository = new TextFileAppointmentRepository();
-    private static IAppointmentRepository repository = new JsonFileAppointmentRepository();
+    //private static IAppointmentRepository repository = new JsonFileAppointmentRepository();
+    private static IAppointmentRepository repository = new DataBaseAppointmentRepository();
 
 
     public static void SetRepository(IAppointmentRepository newRepo) => repository = newRepo;
@@ -26,7 +28,7 @@ public class BookingProcess
     }
 
     public static List<Appointment> SearchAppointment(string name) =>
-        repository.Search(name); // Fixed: used correct parameter name
+        repository.Search(name); 
 
     public static string DeleteAppointment(string name) =>
         repository.Delete(name) ? "Appointment Deleted." : "Appointment not found.";

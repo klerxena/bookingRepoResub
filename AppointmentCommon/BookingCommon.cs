@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BookingCommon
 {
@@ -25,6 +21,9 @@ namespace BookingCommon
 
         public string Birthday { get; set; }
 
-        public string Service { get; set; }
+        public override string ToString()
+        {
+            return $"Name: {Name}, Birthday: {Birthday}, Date: {Date}";
+        }
     }
 }
