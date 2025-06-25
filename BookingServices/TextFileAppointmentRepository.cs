@@ -51,7 +51,7 @@ public class TextFileAppointmentRepository : IAppointmentRepository
 
     public void Add(Appointment appointment)
     {
-        appointments.Add(appointment);  // Fixed: use the object, not Parse
+        appointments.Add(appointment);  
         SaveToFile();
     }
 
