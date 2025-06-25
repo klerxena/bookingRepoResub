@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using BookingCommon;
+using System.Collections.Generic;
 
-namespace BookingCommon
+namespace BookingDL
 {
     public interface IAppointmentRepository
     {
-        void Add(Appointment appointment);
+        void Add(string name, string birthday, string date);
         List<Appointment> GetAll();
         List<Appointment> Search(string name);
         bool Delete(string name);

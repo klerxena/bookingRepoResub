@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using BookingCommon;
-using BookingService;
+﻿using BookingBL;
 
 namespace booking
 {
@@ -18,15 +15,17 @@ namespace booking
             "[7] Exit"
         };
 
+        static BookingProcess bookingProcess = new BookingProcess();
+
         static void Main(string[] args)
         {
             Console.WriteLine("WELCOME TO LASH & NAILS BOOKING SYSTEM");
-
-            DisplayMenu();
-            int userInput = GetUserInput();
-
-            while (userInput != 7)
+            int userInput;
+            do
             {
+                DisplayMenu();
+                userInput = GetUserInput();
+
                 switch (userInput)
                 {
                     case 1:
@@ -54,16 +53,14 @@ namespace booking
                         Console.WriteLine("INVALID OPTION. Please select between 1-7.");
                         break;
                 }
-                DisplayMenu();
-                userInput = GetUserInput();
-            }
+
+            } while (userInput != 7);
         }
 
         static void DisplayMenu()
         {
             Console.WriteLine("-------------------");
             Console.WriteLine("BOOKING MENU");
-
             foreach (var action in actions)
             {
                 Console.WriteLine(action);
@@ -92,30 +89,32 @@ namespace booking
             if (!ValidateDateInput(date))
             {
                 Console.WriteLine("Invalid Date. Please try again.");
+                return;
             }
-            else
-            {
-                BookingProcess.AddAppointment(name, birthday, date);
-                Console.WriteLine("Appointment Added!");
-            }
+
+            bookingProcess.Add(name, birthday, date);
+            Console.WriteLine("Appointment Added!");
         }
 
         static void ViewAppointments()
         {
             Console.WriteLine("----------------");
             Console.WriteLine("YOUR APPOINTMENTS");
-            if (BookingProcess.appointments.Count == 0)
+            var appointments = bookingProcess.GetAll();
+
+            if (appointments.Count == 0)
             {
                 Console.WriteLine("No appointments found.");
             }
             else
             {
-                foreach (var appt in BookingProcess.appointments)
+                foreach (var appt in appointments)
                 {
-                    Console.WriteLine("- " + appt);
+                    Console.WriteLine($"- Name: {appt.Name}, Birthday: {appt.Birthday}, Date: {appt.Date}");
                 }
             }
         }
+
 
         static void SearchAppointment()
         {
@@ -124,14 +123,14 @@ namespace booking
             Console.Write("Enter Name to Search: ");
             string searchName = Console.ReadLine();
 
-            List<Appointment> results = BookingProcess.SearchAppointment(searchName);
+            var results = bookingProcess.Search(searchName);
 
             if (results.Count > 0)
             {
                 Console.WriteLine("Appointment(s) found:");
                 foreach (var result in results)
                 {
-                    Console.WriteLine(result);
+                    Console.WriteLine($"- Name: {result.Name}, Birthday: {result.Birthday}, Date: {result.Date}");
                 }
             }
             else
@@ -140,6 +139,7 @@ namespace booking
             }
         }
 
+
         static void DeleteAppointment()
         {
             Console.WriteLine("----------------");
@@ -147,8 +147,8 @@ namespace booking
             Console.Write("Enter Name of Appointment to Delete: ");
             string nameToDelete = Console.ReadLine();
 
-            string result = BookingProcess.DeleteAppointment(nameToDelete);
-            Console.WriteLine(result);
+            bool result = bookingProcess.Delete(nameToDelete);
+            Console.WriteLine(result ? "Appointment Deleted." : "Appointment not found.");
         }
 
         static void UpdateAppointment()
@@ -161,8 +161,14 @@ namespace booking
             Console.Write("Enter New Appointment Date (MM-DD-YYYY): ");
             string newDate = Console.ReadLine();
 
-            string result = BookingProcess.UpdateAppointment(nameToUpdate, newDate);
-            Console.WriteLine(result);
+            if (!ValidateDateInput(newDate))
+            {
+                Console.WriteLine("Invalid Date. Please try again.");
+                return;
+            }
+
+            bool result = bookingProcess.Update(nameToUpdate, newDate);
+            Console.WriteLine(result ? "Appointment Updated." : "Appointment not found.");
         }
 
         static void RetrieveAppointment()
@@ -172,8 +178,8 @@ namespace booking
             Console.Write("Enter Name of Appointment to Retrieve: ");
             string nameToRetrieve = Console.ReadLine();
 
-            string result = BookingProcess.RetrieveAppointment(nameToRetrieve);
-            Console.WriteLine(result);
+            bool result = bookingProcess.Retrieve(nameToRetrieve);
+            Console.WriteLine(result ? "Appointment Retrieved." : "Appointment not found or already active.");
         }
 
         static bool ValidateDateInput(string date)
@@ -182,7 +188,7 @@ namespace booking
             {
                 if (parsedDate < DateTime.Today)
                 {
-                    Console.WriteLine("Invalid Date.");
+                    Console.WriteLine("Invalid Date. Date must not be in the past.");
                     return false;
                 }
                 return true;

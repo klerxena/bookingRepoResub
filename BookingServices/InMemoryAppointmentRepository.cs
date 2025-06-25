@@ -1,82 +1,69 @@
 ﻿using BookingCommon;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
-public class InMemoryAppointmentRepository : IAppointmentRepository
+namespace BookingDL
 {
-    private List<Appointment> appointments = new();
-    private List<Appointment> deletedAppointments = new();
-    public InMemoryAppointmentRepository()
+    public class InMemoryAppointmentRepository : IAppointmentRepository
     {
-        LoadDefaultAppointments();
-    }
+        List<Appointment> appointments = new List<Appointment>();
+        List<Appointment> deletedAppointments = new List<Appointment>();
 
-    private void LoadDefaultAppointments()
-    {
-        appointments.Add(new Appointment { Name = "Alice", Birthday = "1990-02-02", Date = "2025-07-15" });
-        appointments.Add(new Appointment { Name = "Bob", Birthday = "1985-11-20", Date = "2025-08-01" });
-        appointments.Add(new Appointment { Name = "Charlie", Birthday = "2000-05-05", Date = "2025-09-10" });
-    }
-
-
-
-    public List<Appointment> GetAll()
-    {
-        return new List<Appointment>(appointments);
-    }
-
-    public List<Appointment> Search(string name)
-    {
-        return appointments
-            .Where(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
-            .ToList();
-    }
-
-    public bool Delete(string name)
-    {
-        var index = appointments.FindIndex(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-        if (index >= 0)
+        public List<Appointment> GetAll()
         {
-            deletedAppointments.Add(appointments[index]);
-            appointments.RemoveAt(index);
-            return true;
+            return appointments;
         }
-        return false;
-    }
 
-    public bool Update(string name, string newDate)
-    {
-        var appointment = appointments.FirstOrDefault(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-        if (appointment != null)
+        public void Add(string name, string birthday, string date)
         {
-            appointment.Date = newDate;
-            return true;
-        }
-        return false;
-    }
+            var appointment = new Appointment
+            {
+                Name = name,
+                Birthday = birthday,
+                Date = date
+            };
 
-    public bool Retrieve(string name)
-    {
-        var index = deletedAppointments.FindIndex(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-        if (index >= 0)
+            appointments.Add(appointment);
+        }
+
+        public List<Appointment> Search(string name)
         {
-            appointments.Add(deletedAppointments[index]);
-            deletedAppointments.RemoveAt(index);
-            return true;
+            return appointments
+                .Where(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
-        return false;
-    }
 
+        public bool Delete(string name)
+        {
+            var appt = appointments.FirstOrDefault(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (appt != null)
+            {
+                appointments.Remove(appt);
+                deletedAppointments.Add(appt);
+                return true;
+            }
+            return false;
+        }
 
+        public bool Update(string name, string newDate)
+        {
+            var appt = appointments.FirstOrDefault(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (appt != null)
+            {
+                appt.Date = newDate;
+                return true;
+            }
+            return false;
+        }
 
-    public void Add(Appointment appointment)
-    {
-        appointments.Add(appointment);
-    }
-
-    public void Add(string v)
-    {
-        throw new NotImplementedException();
+        public bool Retrieve(string name)
+        {
+            var appt = deletedAppointments.FirstOrDefault(a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (appt != null)
+            {
+                deletedAppointments.Remove(appt);
+                appointments.Add(appt);
+                return true;
+            }
+            return false;
+        }
     }
 }

@@ -2,7 +2,7 @@
 using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
 
-namespace BookingServices
+namespace BookingDL
 {
     public class DataBaseAppointmentRepository : IAppointmentRepository
     {
@@ -16,13 +16,13 @@ namespace BookingServices
             sqlConnection = new SqlConnection(connectionString);
         }
 
-        public void Add(Appointment appointment)
+        public void Add(string name, string birthday, string date)
         {
             var insertStatement = "INSERT INTO Appointment (Name, Birthday, Date) VALUES (@Name, @Birthday, @Date)";
             SqlCommand insertCommand = new SqlCommand(insertStatement, sqlConnection);
-            insertCommand.Parameters.AddWithValue("@Name", appointment.Name);
-            insertCommand.Parameters.AddWithValue("@Birthday", appointment.Birthday);
-            insertCommand.Parameters.AddWithValue("@Date", appointment.Date);
+            insertCommand.Parameters.AddWithValue("@Name", name);
+            insertCommand.Parameters.AddWithValue("@Birthday", birthday);
+            insertCommand.Parameters.AddWithValue("@Date", date);
 
             sqlConnection.Open();
             insertCommand.ExecuteNonQuery();
