@@ -86,7 +86,7 @@ namespace booking
             Console.Write("Enter Appointment Date (MM-DD-YYYY): ");
             string date = Console.ReadLine();
 
-            if (!ValidateDateInput(date))
+            if (!bookingProcess.ValidateDateInput(date))
             {
                 Console.WriteLine("Invalid Date. Please try again.");
                 return;
@@ -153,6 +153,7 @@ namespace booking
 
         static void UpdateAppointment()
         {
+
             Console.WriteLine("----------------");
             Console.WriteLine("UPDATE APPOINTMENT");
             Console.Write("Enter Name of Appointment to Update: ");
@@ -161,7 +162,7 @@ namespace booking
             Console.Write("Enter New Appointment Date (MM-DD-YYYY): ");
             string newDate = Console.ReadLine();
 
-            if (!ValidateDateInput(newDate))
+            if (!bookingProcess.ValidateDateInput(newDate))
             {
                 Console.WriteLine("Invalid Date. Please try again.");
                 return;
@@ -181,23 +182,5 @@ namespace booking
             bool result = bookingProcess.Retrieve(nameToRetrieve);
             Console.WriteLine(result ? "Appointment Retrieved." : "Appointment not found or already active.");
         }
-
-        static bool ValidateDateInput(string date)
-        {
-            if (DateTime.TryParse(date, out DateTime parsedDate))
-            {
-                if (parsedDate < DateTime.Today)
-                {
-                    Console.WriteLine("Invalid Date. Date must not be in the past.");
-                    return false;
-                }
-                return true;
-            }
-            else
-            {
-                Console.WriteLine("Invalid Date Format. Use MM-DD-YYYY.");
-                return false;
-            }
         }
     }
-}

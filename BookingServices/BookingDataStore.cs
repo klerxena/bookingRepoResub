@@ -5,9 +5,9 @@ namespace BookingDL
     public class BookingDataStore
     {
         //static IAppointmentRepository appointmentRepository = new  InMemoryAppointmentRepository();
-        static IAppointmentRepository appointmentRepository = new JsonFileAppointmentRepository();
+        //static IAppointmentRepository appointmentRepository = new JsonFileAppointmentRepository();
         //static IAppointmentRepository appointmentRepository = new TextFileAppointmentRepository();
-        //static IAppointmentRepository appointmentRepository = new DataBaseAppointmentRepository();
+        static IAppointmentRepository appointmentRepository = new DataBaseAppointmentRepository();
 
         public void Add(string name, string birthday, string date)
         {
@@ -38,5 +38,7 @@ namespace BookingDL
         {
             return appointmentRepository.Retrieve(name);
         }
+
+
     }
 }

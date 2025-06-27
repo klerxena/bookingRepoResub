@@ -36,5 +36,23 @@ namespace BookingBL
         {
             return dataStore.Retrieve(name);
         }
-    }
+
+        public bool ValidateDateInput(string date)
+        {
+            if (DateTime.TryParse(date, out DateTime parsedDate))
+            {
+                if (parsedDate < DateTime.Today)
+                {
+                    Console.WriteLine("Invalid Date. Date must not be in the past.");
+                    return false;
+                }
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Invalid Date Format. Use MM-DD-YYYY.");
+                return false;
+            }
+        }
+        }
 }
