@@ -1,5 +1,7 @@
 ﻿using BookingCommon;
 using BookingDL;
+using System.Net;
+using System.Net.Mail;
 
 namespace BookingBL
 {
@@ -24,7 +26,7 @@ namespace BookingBL
 
         public bool Delete(string name)
         {
-            return dataStore.Delete(name); 
+            return dataStore.Delete(name);
         }
 
         public bool Update(string name, string newDate)
@@ -54,5 +56,33 @@ namespace BookingBL
                 return false;
             }
         }
+
+        public bool SendNotification(string toEmail, string subject, string body)
+        {
+            try
+            {
+                var client = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
+                {
+                    Credentials = new NetworkCredential("01030d68f1b7aa", "1375c01a9a5aef"),
+                    EnableSsl = true
+                };
+
+                var mailMessage = new MailMessage
+                {
+                    From = new MailAddress("jasminclaire@deyro.com"),
+                    Subject = subject ?? string.Empty,
+                    Body = body ?? string.Empty
+                };
+                mailMessage.To.Add(toEmail ?? string.Empty);
+
+                client.Send(mailMessage);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Email send failed: {ex.Message}");
+                return false;
+            }
         }
+    }
 }
