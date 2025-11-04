@@ -10,41 +10,54 @@ namespace WebApplication2.Controllers
     [ApiController]
     public class AppointmentController : ControllerBase
     {
-        BookingBL.BookingProcess bookingProcess = new BookingBL.BookingProcess();
+        private readonly BookingBL.BookingProcess _bookingProcess;
+
+        
+        public AppointmentController(BookingBL.BookingProcess bookingProcess)
+        {
+            _bookingProcess = bookingProcess; 
+        }
 
         [HttpGet]
         public IEnumerable<Appointment> GetAppointments()
         {
-            return bookingProcess.GetAll();
+            
+            return _bookingProcess.GetAll();
         }
 
         [HttpPost]
         public IActionResult AddAppointment([FromBody] Appointment request)
         {
-            bookingProcess.Add(request.Name, request.Birthday, request.Date);
+            _bookingProcess.Add(request.Name, request.Birthday, request.Date);
             return Ok(true);
         }
 
         [HttpGet("search")]
         public IEnumerable<Appointment> SearchAppointment([FromQuery] string name)
         {
-            return bookingProcess.Search(name);
+            return _bookingProcess.Search(name);
         }
 
         [HttpPatch("update")]
         public IActionResult UpdateAppointment([FromQuery] string name, [FromQuery] string newDate)
         {
-            var result = bookingProcess.Update(name, newDate);
+            var result = _bookingProcess.Update(name, newDate);
             return Ok(result);
         }
 
         [HttpDelete]
         public IActionResult DeleteAppointment([FromQuery] string name)
         {
-            var result = bookingProcess.Delete(name);
+            var result = _bookingProcess.Delete(name);
             return Ok(result);
         }
 
-        
+       
+        [HttpPost("SendTestEmail")]
+        public IActionResult SendTestEmail([FromQuery] string email)
+        {
+            bool result = _bookingProcess.SendNotification(email, "Test Email", "This is a test from the API");
+            return Ok(result);
+        }
     }
 }

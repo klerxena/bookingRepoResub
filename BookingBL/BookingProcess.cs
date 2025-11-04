@@ -1,7 +1,5 @@
 ﻿using BookingCommon;
 using BookingDL;
-using System.Net;
-using System.Net.Mail;
 
 namespace BookingBL
 {
@@ -9,6 +7,24 @@ namespace BookingBL
     {
         BookingDataStore dataStore = new BookingDataStore();
 
+       
+        private readonly EmailService _emailService;
+
+        
+        public BookingProcess(EmailService emailService)
+        {
+            _emailService = emailService;
+            dataStore = new BookingDataStore(); 
+        }
+
+        
+        public BookingProcess()
+        {
+            dataStore = new BookingDataStore();
+            
+        }
+
+        
         public void Add(string name, string birthday, string date)
         {
             dataStore.Add(name, birthday, date);
@@ -57,32 +73,18 @@ namespace BookingBL
             }
         }
 
+
+        
         public bool SendNotification(string toEmail, string subject, string body)
         {
-            try
+            if (_emailService == null)
             {
-                var client = new SmtpClient("sandbox.smtp.mailtrap.io", 2525)
-                {
-                    Credentials = new NetworkCredential("01030d68f1b7aa", "1375c01a9a5aef"),
-                    EnableSsl = true
-                };
-
-                var mailMessage = new MailMessage
-                {
-                    From = new MailAddress("jasminclaire@deyro.com"),
-                    Subject = subject ?? string.Empty,
-                    Body = body ?? string.Empty
-                };
-                mailMessage.To.Add(toEmail ?? string.Empty);
-
-                client.Send(mailMessage);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Email send failed: {ex.Message}");
+                Console.WriteLine("EmailService not configured. Cannot send email.");
+                
                 return false;
             }
+            
+            return _emailService.SendEmail(toEmail, subject, body);
         }
     }
 }

@@ -12,15 +12,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="AppointmentCommon">
-      <HintPath>..\bookingRepoResub\BookingBL\bin\Debug\net8.0\AppointmentCommon.dll</HintPath>
-    </Reference>
-    <Reference Include="BookingBL">
-      <HintPath>..\bookingRepoResub\BookingBL\bin\Debug\net8.0\BookingBL.dll</HintPath>
-    </Reference>
-    <Reference Include="BookingDL">
-      <HintPath>..\bookingRepoResub\BookingBL\bin\Debug\net8.0\BookingDL.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\AppointmentCommon\AppointmentCommon.csproj" />
+    <ProjectReference Include="..\BookingBL\BookingBL.csproj" />
   </ItemGroup>
+
+  
+  
 
 </Project>

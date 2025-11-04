@@ -1,4 +1,7 @@
 ﻿using BookingBL;
+using Microsoft.Extensions.Configuration; // <-- This is from the new package
+using System;
+using System.IO; // <-- This is new
 
 namespace booking
 {
@@ -18,6 +21,17 @@ namespace booking
 
         static void Main(string[] args)
         {
+            // 1. Build the configuration (from Copilot suggestion)
+            IConfiguration config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            // 2. Create the services manually (from Copilot suggestion)
+            EmailService emailService = new EmailService(config);
+            BookingProcess bookingProcess = new BookingProcess(emailService);
+
+            // 3. Now the app starts
             Console.WriteLine("WELCOME TO LASH & NAILS BOOKING SYSTEM");
 
             DisplayMenu();
@@ -28,25 +42,25 @@ namespace booking
                 switch (userInput)
                 {
                     case 1:
-                        AddAppointment();
+                        AddAppointment(bookingProcess); // <-- Pass the object
                         break;
                     case 2:
-                        ViewAppointments();
+                        ViewAppointments(bookingProcess); // <-- Pass the object
                         break;
                     case 3:
-                        SearchAppointment();
+                        SearchAppointment(bookingProcess); // <-- Pass the object
                         break;
                     case 4:
-                        DeleteAppointment();
+                        DeleteAppointment(bookingProcess); // <-- Pass the object
                         break;
                     case 5:
-                        UpdateAppointment();
+                        UpdateAppointment(bookingProcess); // <-- Pass the object
                         break;
                     case 6:
-                        RetrieveAppointment();
+                        RetrieveAppointment(bookingProcess); // <-- Pass the object
                         break;
                     case 7:
-                        SendNotificationEmail();
+                        SendNotificationEmail(bookingProcess); // <-- Pass the object
                         break;
                     case 8:
                         Console.WriteLine("Thank you for booking with us! Have a great day!");
@@ -77,10 +91,10 @@ namespace booking
             return Convert.ToInt16(Console.ReadLine());
         }
 
-        static void AddAppointment()
-        {
-            BookingProcess bookingProcess = new BookingProcess();
+        // --- All methods below now take BookingProcess as a parameter ---
 
+        static void AddAppointment(BookingProcess bookingProcess)
+        {
             Console.WriteLine("----------------");
             Console.WriteLine("ADD APPOINTMENT");
             Console.Write("Enter Name: ");
@@ -103,9 +117,8 @@ namespace booking
             }
         }
 
-        static void ViewAppointments()
+        static void ViewAppointments(BookingProcess bookingProcess)
         {
-            BookingProcess bookingProcess = new BookingProcess();
             Console.WriteLine("----------------");
             Console.WriteLine("YOUR APPOINTMENTS");
             var appointments = bookingProcess.GetAll();
@@ -122,9 +135,8 @@ namespace booking
             }
         }
 
-        static void SearchAppointment()
+        static void SearchAppointment(BookingProcess bookingProcess)
         {
-            BookingProcess bookingProcess = new BookingProcess();
             Console.WriteLine("----------------");
             Console.WriteLine("SEARCH APPOINTMENT");
             Console.Write("Enter Name to Search: ");
@@ -146,9 +158,8 @@ namespace booking
             }
         }
 
-        static void DeleteAppointment()
+        static void DeleteAppointment(BookingProcess bookingProcess)
         {
-            BookingProcess bookingProcess = new BookingProcess();
             Console.WriteLine("----------------");
             Console.WriteLine("DELETE APPOINTMENT");
             Console.Write("Enter Name of Appointment to Delete: ");
@@ -158,9 +169,8 @@ namespace booking
             Console.WriteLine(result ? "Appointment deleted." : "Appointment not found.");
         }
 
-        static void UpdateAppointment()
+        static void UpdateAppointment(BookingProcess bookingProcess)
         {
-            BookingProcess bookingProcess = new BookingProcess();
             Console.WriteLine("----------------");
             Console.WriteLine("UPDATE APPOINTMENT");
             Console.Write("Enter Name of Appointment to Update: ");
@@ -173,9 +183,8 @@ namespace booking
             Console.WriteLine(result ? "Appointment updated." : "Appointment not found.");
         }
 
-        static void RetrieveAppointment()
+        static void RetrieveAppointment(BookingProcess bookingProcess)
         {
-            BookingProcess bookingProcess = new BookingProcess();
             Console.WriteLine("----------------");
             Console.WriteLine("RETRIEVE DELETED APPOINTMENT");
             Console.Write("Enter Name of Appointment to Retrieve: ");
@@ -185,9 +194,10 @@ namespace booking
             Console.WriteLine(result ? "Appointment retrieved." : "Appointment not found.");
         }
 
-        static void SendNotificationEmail()
+        // This is the updated method, as suggested by Copilot
+        static void SendNotificationEmail(BookingProcess bookingProcess)
         {
-            BookingProcess bookingProcess = new BookingProcess();
+            // We no longer create a new BookingProcess here
             Console.WriteLine("----------------");
             Console.WriteLine("SEND NOTIFICATION EMAIL");
             Console.Write("Enter recipient email: ");
@@ -197,6 +207,7 @@ namespace booking
             Console.Write("Enter message body: ");
             string body = Console.ReadLine();
 
+            // This will work now
             bool sent = bookingProcess.SendNotification(toEmail, subject, body);
             Console.WriteLine(sent ? "Email sent successfully!" : "Failed to send email.");
         }
